@@ -7,25 +7,33 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <script>
-        let isLoginForm = true;
-        function change() {
-            console.log(1);
-            let form = document.getElementById("loginOrRegister")
-            form.action = isLoginForm ? "/JavaEE_Work_war_exploded/user/register" : "/JavaEE_Work_war_exploded/user/login";
-
-            document.getElementById("btn_submit").value =  isLoginForm ? "注册" : "登录";
-            document.getElementById("btn_change").value = isLoginForm ? "已有账号?现在登录" : "没有账号?注册一个"
-            isLoginForm = !isLoginForm;
+        function onChange() {
+            let url = "/JavaEE_Work_war_exploded/tool/operate?";
+            url += 'op1=' + document.getElementById('op1').value;
+            url += '&op2=' + document.getElementById('op2').value;
+            url += '&operator=%2B'
+            let xhr = new XMLHttpRequest();  //这里没有考虑IE浏览器，如果需要择if判断加
+            xhr.open('GET', url, true);
+            xhr.send();//这里要是没有参数传，就写null
+            xhr.onreadystatechange = function () {
+                if (xhr.status === 200 && xhr.readyState === 4) {
+                    let info = xhr.responseText;
+                    let o = eval("(" + info + ")");
+                    console.log(o);
+                    document.getElementById('result').innerText = o['result'];
+                    document.getElementById('msg').innerText = o['msg'];
+                }
+            }
         }
     </script>
 </head>
 <body>
-<form id = "loginOrRegister" action="/JavaEE_Work_war_exploded/user/login" method="post">
-    用户名:<input type="text" name="username"><br>
-    密 码:<input type="password" name="password"><br>
-    <input id = "btn_submit" type="submit" value="登录">
-    <input type="reset" value="重置">
-    <input id = "btn_change" type="button" onclick="change()" value="没有账号?注册一个">
-</form>
+<input id="op1" type="text" size="10px" onchange="onChange()" value="1"/>
+<label>+</label>
+<input id="op2" type="text" size="10px" onchange="onChange()" value="1"/>
+<label>=</label>
+<label id="result">2</label>
+<br>
+<label id="msg"></label>
 </body>
 </html>
